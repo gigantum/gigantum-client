@@ -107,6 +107,12 @@
   &--selected {
     border: 1px solid $primary;
   }
+  &--custom .DevTools__icon {
+    background:  url('~Images/icons/app-icon.svg') no-repeat  center center;
+  }
+  &--custom .DevTools__icon:before {
+    content: "" !important;
+  }
 
   &:hover {
     background: $primary;

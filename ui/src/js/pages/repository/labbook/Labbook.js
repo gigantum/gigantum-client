@@ -965,6 +965,11 @@ const LabbookFragmentContainer = createRefetchContainer(
            isLocal
            isRemote
          }
+         environment {
+           bundledApps {
+             appName
+           }
+         }
           ...Environment_labbook
           ...LabbookOverviewContainer_labbook
           ...LabbookActivityContainer_labbook

@@ -10,6 +10,21 @@ import { setErrorMessage, setInfoMessage, setWarningMessage } from 'JS/redux/act
 // assets
 import './DevTools.scss';
 
+const getDevTool = (project) => {
+  let devTools = project.environment.base
+    ? project.environment.base.developmentTools
+    : [];
+  const bundledApps = Object.keys(project.environment.bundledApps).map(index => {
+    return project.environment.bundledApps[index].appName;
+  });
+  devTools = devTools.concat(bundledApps);
+  devTools = devTools.filter(tool => !(tool === 'rstudio' && process.env.BUILD_TYPE === 'cloud'));
+  return {
+    devTools,
+    bundledApps,
+  };
+};
+
 const setSelectedDevTool = (self) => {
   const { labbook } = self.props;
   const { owner, name, environment } = labbook;
@@ -288,9 +303,10 @@ class DevTools extends Component<Props> {
       showDevList,
       showPopupBlocked,
     } = this.state;
-    let devTools = labbook.environment.base
-      ? labbook.environment.base.developmentTools
-      : [];
+    let {
+      devTools,
+      bundledApps,
+    } = getDevTool(labbook);
     devTools = devTools.filter(tool => !(tool === 'rstudio' && process.env.BUILD_TYPE === 'cloud'));
     const disableLaunch = process.env.BUILD_TYPE === 'cloud'
       && selectedDevTool === 'rstudio';
@@ -350,6 +366,7 @@ class DevTools extends Component<Props> {
                   const devToolsCss = classNames({
                     DevTools__item: true,
                     'DevTools__item--selected': (developmentTool === selectedDevTool),
+                    'DevTools__item--custom': (bundledApps.indexOf(developmentTool) > -1),
                   });
 
                   return (
