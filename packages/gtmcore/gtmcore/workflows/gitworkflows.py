@@ -16,7 +16,7 @@ from gtmcore.exceptions import GigantumException
 from gtmcore.inventory import Repository
 from gtmcore.inventory.inventory import InventoryManager
 from gtmcore.dataset import Dataset
-from gtmcore.inventory.branching import BranchManager
+from gtmcore.inventory.branching import BranchManager, MergeError
 from gtmcore.dataset.manifest import Manifest
 from gtmcore.dataset.io.manager import IOManager
 from gtmcore.dispatcher import Dispatcher
@@ -117,6 +117,8 @@ class GitWorkflow(ABC):
             updates_cnt = gitworkflows_utils.sync_branch(self.repository, username=username,
                                                          override=override.value, pull_only=pull_only,
                                                          feedback_callback=feedback_callback)
+        except MergeError:
+            raise
         except Exception as err:
             feedback_callback(f"ERROR: {str(err)}")
             raise Exception(f"An error occurred while syncing. View details for more information and try again.")

@@ -11,6 +11,10 @@ from gtmcore.configuration.utils import call_subprocess
 
 logger = LMLogger.get_logger()
 
+# The UI currently triggers the merge conflict modal
+# when the error message contains the following string
+UI_MERGE_CONFLICT_STRING = "Merge conflict"
+
 
 class BranchException(GigantumException):
     pass
@@ -20,11 +24,8 @@ class BranchWorkflowViolation(BranchException):
     pass
 
 
-class MergeConflict(BranchException):
-    def __init__(self, message, file_conflicts: List[str]) -> None:
-        super().__init__(message)
-        # List of file paths (relative to root) that are in conflict
-        self.file_conflicts = file_conflicts
+class MergeError(GigantumException):
+    pass
 
 
 class InvalidBranchName(BranchException):
@@ -203,10 +204,7 @@ class BranchManager(object):
                 call_subprocess(f'git merge {other_branch}'.split(), cwd=self.repository.root_dir)
             except subprocess.CalledProcessError as merge_error:
                 logger.warning(f"Merge conflict syncing {str(self.repository)}")
-                # TODO - This should be cleaned up (The UI attempts to match on the token "Merge conflict")
-                conflicted_files = self._infer_conflicted_files(merge_error.stdout.decode())
-                raise MergeConflict(f"Merge conflict - {merge_error}",
-                                    file_conflicts=conflicted_files)
+                raise MergeError(f"{UI_MERGE_CONFLICT_STRING} - {merge_error}")
             self.repository.git.commit(f'Merged from branch `{other_branch}`')
         except Exception as e:
             call_subprocess(f'git reset --hard {checkpoint}'.split(), cwd=self.repository.root_dir)

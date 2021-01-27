@@ -19,7 +19,7 @@ from gtmcore.workflows import GitWorkflowException, LabbookWorkflow, DatasetWork
 from gtmcore.workflows.gitworkflows_utils import create_remote_gitlab_repo
 from gtmcore.fixtures import (helper_create_remote_repo as _MOCK_create_remote_repo, mock_labbook_lfs_disabled,
                               mock_config_file)
-from gtmcore.inventory.branching import BranchManager, MergeConflict
+from gtmcore.inventory.branching import BranchManager, MergeError
 
 from gtmcore.dispatcher import Dispatcher
 import gtmcore.dispatcher.dataset_jobs
@@ -418,8 +418,12 @@ class TestGitWorkflowsMethods(object):
         wf.publish(username=username)
         bm = BranchManager(lb, username='test')
         bm.create_branch('test-conflict-branch')
-        fpath = os.path.join(lb.root_dir, 'input', 'testfile')
-        with open(fpath, 'w') as f: f.write('filedata')
+        fpath1 = os.path.join(lb.root_dir, 'input', 'testfile1')
+        with open(fpath1, 'w') as f:
+            f.write('filedata1')
+        fpath2 = os.path.join(lb.root_dir, 'input', 'testfile2')
+        with open(fpath2, 'w') as f:
+            f.write('filedata2')
         lb.sweep_uncommitted_changes()
         wf.sync('test')
 
@@ -428,15 +432,20 @@ class TestGitWorkflowsMethods(object):
         wf_other = LabbookWorkflow.import_from_remote(remote, username=other_user)
         bm_other = BranchManager(wf_other.labbook, username=other_user)
         bm_other.workon_branch('test-conflict-branch')
-        with open(os.path.join(wf_other.labbook.root_dir, 'input', 'testfile'), 'w') as f:
-            f.write('conflicting-change-other-user')
+        with open(os.path.join(wf_other.labbook.root_dir, 'input', 'testfile1'), 'w') as f:
+            f.write('conflicting-change-other-user1')
+        with open(os.path.join(wf_other.labbook.root_dir, 'input', 'testfile2'), 'w') as f:
+            f.write('conflicting-change-other-user2')
         wf_other.labbook.sweep_uncommitted_changes()
         wf_other.sync(username=username)
 
-        with open(fpath, 'w') as f: f.write('conflicting-change-original-user')
+        with open(fpath1, 'w') as f:
+            f.write('conflicting-change-original-user')
+        with open(fpath2, 'w') as f:
+            f.write('conflicting-change-original-user')
         wf.labbook.sweep_uncommitted_changes()
         h = wf.labbook.git.commit_hash
-        with pytest.raises(MergeConflict):
+        with pytest.raises(MergeError):
             n = wf.sync(username=username)
         assert h == wf.labbook.git.commit_hash
 

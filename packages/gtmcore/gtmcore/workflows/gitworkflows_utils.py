@@ -19,7 +19,7 @@ from gtmcore.inventory import Repository
 from gtmcore.inventory.inventory import InventoryManager
 from gtmcore.logging import LMLogger
 from gtmcore.configuration.utils import call_subprocess
-from gtmcore.inventory.branching import BranchManager, MergeConflict
+from gtmcore.inventory.branching import BranchManager, MergeError
 from gtmcore.configuration import Configuration
 from gtmcore.dispatcher import Dispatcher
 import gtmcore.dispatcher.dataset_jobs
@@ -28,11 +28,10 @@ import gtmcore.dispatcher.dataset_jobs
 logger = LMLogger.get_logger()
 
 
+MERGE_CONFLICT_STRING = "Automatic merge failed"
+
+
 class WorkflowsException(Exception):
-    pass
-
-
-class MergeError(WorkflowsException):
     pass
 
 
@@ -135,31 +134,32 @@ def _set_upstream_branch(repository: Repository, branch_name: str, feedback_cb: 
 def _pull(repository: Repository, branch_name: str, override: str, feedback_cb: Callable,
           username: Optional[str] = None) -> None:
     current_server = repository.client_config.get_server_configuration()
-    feedback_cb(f"Pulling latest changes from {current_server.name}.")
+    feedback_cb(f"Pulling latest changes from {current_server.name}. Please wait...")
 
     cp = repository.git.commit_hash
-    try:
-        call_git_subprocess(f'git pull --progress'.split(), cwd=repository.root_dir, feedback_callback=feedback_cb)
 
-    except subprocess.CalledProcessError as cp_error:
-        if 'Automatic merge failed' in cp_error.stdout.decode():
-            feedback_cb(f"Detected merge conflict, resolution method = {override}")
-            bm = BranchManager(repository, username='')
-            conflicted_files = bm._infer_conflicted_files(cp_error.stdout.decode())
-            if 'abort' == override:
-                call_subprocess(f'git reset --hard {cp}'.split(), cwd=repository.root_dir)
-                conflicted_str = "\n".join(conflicted_files)
-                feedback_cb(f'Sync aborted due to conflicts while pulling changes from {current_server.name}. '
-                            f'The following files conflicted:\n\n {conflicted_str}')
-                raise MergeConflict(f'Sync aborted due to conflicts while pulling changes from {current_server.name}',
-                                    conflicted_files)
-            call_subprocess(f'git checkout --{override} {" ".join(conflicted_files)}'.split(),
-                            cwd=repository.root_dir)
-            call_subprocess('git add .'.split(), cwd=repository.root_dir)
-            call_subprocess('git commit -m "Merge"'.split(), cwd=repository.root_dir)
-            feedback_cb("Resolved merge conflict")
-        else:
-            raise
+    # Run a pull and if you get output, a conflict occurred
+    output = call_git_subprocess(f'git pull --progress'.split(),
+                                 cwd=repository.root_dir,
+                                 feedback_callback=feedback_cb)
+    if output:
+        logger.info(f"IN MERGE FAIL BLOCK")
+        feedback_cb(f"Detected merge conflict, resolution method = {override}")
+        bm = BranchManager(repository, username='')
+        conflicted_files = bm._infer_conflicted_files(output)
+        if 'abort' == override:
+            conflicted_str = "\n".join(conflicted_files)
+            feedback_cb(f'Sync aborted due to conflicts while pulling changes from the server.'
+                        f'The following files conflicted:\n\n {conflicted_str}')
+            call_subprocess(f'git reset --hard {cp}'.split(), cwd=repository.root_dir)
+            raise MergeError(f'Sync aborted due to conflicts while pulling changes from {current_server.name}')
+
+        # Resolving conflict on pull
+        call_subprocess(f'git checkout --{override} {" ".join(conflicted_files)}'.split(),
+                        cwd=repository.root_dir)
+        call_subprocess('git add .'.split(), cwd=repository.root_dir)
+        call_subprocess('git commit -m "Merge"'.split(), cwd=repository.root_dir)
+        feedback_cb("Resolved merge conflict")
 
 
 def sync_branch(repository: Repository, username: Optional[str], override: str,
@@ -343,7 +343,7 @@ def process_linked_datasets(labbook: LabBook, logged_in_username: str) -> None:
 
 
 # TODO #1456: Subprocess calls to Git should be consolidated in the internal Git API - currently git_fs_shim.py
-def call_git_subprocess(cmd_tokens: List[str], cwd: str, feedback_callback: Callable) -> None:
+def call_git_subprocess(cmd_tokens: List[str], cwd: str, feedback_callback: Callable) -> Optional[str]:
     """Execute a subprocess call to git from a background job
 
     Args:
@@ -352,11 +352,12 @@ def call_git_subprocess(cmd_tokens: List[str], cwd: str, feedback_callback: Call
         feedback_callback: callback to print to UI
 
     Returns:
-        Decoded stdout of called process after completing
+        Decoded stdout of called process after completing IF merge conflicts occurred
 
     Raises:
         subprocess.CalledProcessError
     """
+    output = ""
     with subprocess.Popen(cmd_tokens, cwd=cwd, shell=False,
                           stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1, universal_newlines=True) as sp:
         for line in sp.stdout:  # type: ignore
@@ -371,10 +372,20 @@ def call_git_subprocess(cmd_tokens: List[str], cwd: str, feedback_callback: Call
             # Just grab the last item if console is updated interactively. You only get
             # all of the output at once due to how things get flushed it seems anyway.
             feedback_callback(line)
+            output = f"{output}{line}"
 
     if sp.returncode != 0:
-        cmd = " ".join(cmd_tokens)
-        raise Exception(f"An error occurred while running `{cmd}`")
+        if MERGE_CONFLICT_STRING in line:
+            # This is a merge conflict that we need to handle differently.
+            # Currently, the above string is used to detect when a merge conflict
+            # has occurred.
+            return output
+        else:
+            # An error occurred
+            cmd = " ".join(cmd_tokens)
+            raise Exception(f"An error occurred while running `{cmd}`")
+    else:
+        return None
 
 
 def handle_git_feedback(current_feedback: str, message: str) -> str:

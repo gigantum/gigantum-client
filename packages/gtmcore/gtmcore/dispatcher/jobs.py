@@ -13,7 +13,7 @@ from gtmcore.labbook import LabBook
 from gtmcore.gitlib import RepoLocation
 
 from gtmcore.inventory.inventory import InventoryManager, InventoryException
-from gtmcore.inventory.branching import MergeConflict
+from gtmcore.inventory.branching import MergeError, UI_MERGE_CONFLICT_STRING
 from gtmcore.inventory import Repository
 
 from gtmcore.environment import RepositoryManager
@@ -21,7 +21,6 @@ from gtmcore.environment.repository import RepositoryLock
 from gtmcore.logging import LMLogger
 from gtmcore.workflows import ZipExporter, LabbookWorkflow, DatasetWorkflow, MergeOverride
 from gtmcore.workflows.gitworkflows_utils import handle_git_feedback
-from gtmcore.configuration import Configuration
 
 from gtmcore.dataset.storage.backend import UnmanagedStorageBackend
 
@@ -105,9 +104,10 @@ def sync_repository(repository: Repository, username: str, override: MergeOverri
                           id_token=id_token, pull_only=pull_only)
         logger.info(f"(Job {p} Completed sync_repository with cnt={cnt}")
         return cnt
-    except MergeConflict as me:
-        logger.exception(f"(Job {p}) Merge conflict: {me}")
-        raise
+    except MergeError as err:
+        # When sending the merge error up, we must set this special string so the
+        # UI pops up the merge conflict modal
+        raise MergeError(f"{UI_MERGE_CONFLICT_STRING} - {err}")
 
 
 def import_labbook_from_remote(remote_url: str, username: str) -> str:
