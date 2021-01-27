@@ -648,7 +648,6 @@ class BranchMenu extends Component<Props> {
       this.setState({ showSyncWarning: true, warningAction });
       return;
     }
-
     this.setState({ syncMenuVisible: false, showSyncWarning: false });
 
 
@@ -685,9 +684,9 @@ class BranchMenu extends Component<Props> {
             if (errorMessage.indexOf('Merge conflict') > -1) {
               self._toggleSyncModal();
               this.setState({ pullOnly });
+            } else {
+              this._setPublishErrorState(errorMessage, reportedFailureMessage);
             }
-            console.trace(errorMessage, errorMessage);
-            this._setPublishErrorState(errorMessage, reportedFailureMessage);
           },
           pullOnly: pullOnly || false,
         };

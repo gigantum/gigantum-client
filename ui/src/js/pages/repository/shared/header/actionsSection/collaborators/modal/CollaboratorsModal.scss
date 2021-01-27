@@ -3,6 +3,12 @@
 
 .CollaboratorsModal__add {
   position: relative;
+  align-items: flex-start;
+
+  button {
+    align-self: flex-start !important;
+    margin-top: 5px !important;
+  }
   @include flex(flex-start, row);
 
   &--disabled {
@@ -22,14 +28,24 @@
   padding: 20px 100px;
 }
 
-.CollaboratorsModal__input--collaborators[type="text"] {
-  width: 480px !important;
+.CollaboratorModal__p--error {
+    color: $orange;
+}
 
-  font-size: 24px !important;
-  margin: 5px 15px 5px  0 !important;
+.CollaboratorsModal__input {
+  &--collaborators[type="text"] {
+    width: 480px !important;
 
-  &::-webkit-input-placeholder {
-    line-height:normal!important;
+    font-size: 24px !important;
+    margin: 5px 15px 5px  0 !important;
+
+    &::-webkit-input-placeholder {
+      line-height:normal!important;
+    }
+  }
+
+  &--error {
+    border: 1px solid $orange !important;
   }
 }
 
@@ -141,8 +157,8 @@
 
 .CollaboratorsModal__item {
   position: relative;
+  align-items: center;
   @include flex(space-between, row);
-  align-items: flex-end;
   width: 100%;
   margin: 18px 25px 13px 0;
   padding: 0 40px 0 10px;
@@ -256,7 +272,6 @@
 }
 
 .CollaboratorsModal__permissions {
-  align-self: flex-end;
   margin: 5px 0;
   position: relative;
   &--individual {

@@ -35,6 +35,7 @@
   &__collaborator:focus {
     transition: none;
     height: 30px;
+    min-width: 30px;
     width: 30px;
 
     background-position: center center;

@@ -25,6 +25,7 @@ class CollaboratorSearch extends Component<Props> {
     addCollaboratorButtonDisabled: false,
     buttonLoaderAddCollaborator: '',
     colloboratorSearchList: [],
+    lookupError: false,
     newCollaborator: '',
     newPermissions: 'readonly',
     selectedIndex: 0,
@@ -119,10 +120,15 @@ class CollaboratorSearch extends Component<Props> {
         apiURL,
         {},
         { force: true },
-      ).then((response) => {
+      ).then((response, error) => {
+        console.log(response, response instanceof TypeError);
+        if (response instanceof TypeError) {
+          this.setState({ lookupError: true });
+          return;
+        }
         const collaborators = response.hits.hit.map(hit => hit.fields);
 
-        this.setState({ colloboratorSearchList: collaborators });
+        this.setState({ colloboratorSearchList: collaborators, lookupError: false });
       });
     } else {
       this.setState({ colloboratorSearchList: [] });
@@ -241,6 +247,7 @@ class CollaboratorSearch extends Component<Props> {
       addCollaboratorButtonDisabled,
       buttonLoaderAddCollaborator,
       colloboratorSearchList,
+      lookupError,
       newCollaborator,
       newPermissions,
       permissionMenuOpen,
@@ -255,6 +262,10 @@ class CollaboratorSearch extends Component<Props> {
     const collaboratorSearchCSS = classNames({
       CollaboratorsModal__add: true,
       'CollaboratorsModal__add--disabled': disableAdd,
+    });
+    const collaboratorInputCSS = classNames({
+      'CollaboratorsModal__input--collaborators': true,
+      'CollaboratorsModal__input--error': lookupError,
     });
     const autoCompleteMenu = classNames({
       'CollaboratorsModal__auto-compelte-menu box-shadow': true,
@@ -273,16 +284,19 @@ class CollaboratorSearch extends Component<Props> {
 
     return (
       <div className={collaboratorSearchCSS}>
-
-        <input
-          className="CollaboratorsModal__input--collaborators"
-          disabled={disableAdd}
-          ref={(ref) => { this.collaboratorSearch = ref; }}
-          onChange={evt => this._getUsers(evt)}
-          onKeyUp={evt => this._getUsers(evt)}
-          type="text"
-          placeholder="Add Collaborator"
-        />
+        <div>
+          <input
+            className={collaboratorInputCSS}
+            disabled={disableAdd}
+            ref={(ref) => { this.collaboratorSearch = ref; }}
+            onChange={evt => this._getUsers(evt)}
+            onKeyUp={evt => this._getUsers(evt)}
+            type="text"
+            placeholder="Add Collaborator"
+          />
+          { lookupError
+            && <p className="CollaboratorModal__p--error">Collaborator lookup failed, try restarting gigantum or contact support.</p>}
+        </div>
 
         <div className={autoCompleteMenu}>
 
