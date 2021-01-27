@@ -18,7 +18,7 @@ import Loader from 'Components/loader/Loader';
 import Base from './Base';
 import Packages from './packages/Packages';
 import Secrets from './secrets/Secrets';
-import CustomApps from './customApps/customApps';
+import CustomApps from './customApps/CustomApps';
 import CustomDockerfile from './CustomDockerfile';
 // assets
 import './Environment.scss';

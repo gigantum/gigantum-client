@@ -1,7 +1,6 @@
 // mutations
 import SetBundledAppMutation from 'Mutations/environment/SetBundledAppMutation';
 import RemoveBundledAppMutation from 'Mutations/environment/RemoveBundledAppMutation';
-// import InsertSecretsEntryMutation from 'Mutations/environment/InsertSecretsEntryMutation';
 
 class CustomAppsMutations {
   /**
