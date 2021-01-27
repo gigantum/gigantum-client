@@ -1,0 +1,15 @@
+@import '~Styles/_imports.scss';
+
+
+.CustomAppsEditing {
+  align-items: center;
+  margin: 5px 0;
+
+  .Btn {
+    margin: 0 5px;
+  }
+
+  .Btn:first-child {
+    margin: 0 5px 0 0;
+  }
+}

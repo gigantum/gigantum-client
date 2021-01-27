@@ -46,6 +46,13 @@ tbody {
     height: 100px;
     padding-top: 20px;
 
+    &--customApps {
+      height: auto;
+      min-height: 50px;
+      max-height: 80px;
+      padding: 0;
+    }
+
     &--secrets {
       height: auto;
       min-height: 50px;

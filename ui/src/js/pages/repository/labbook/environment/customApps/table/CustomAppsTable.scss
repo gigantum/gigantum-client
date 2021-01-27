@@ -1,0 +1,31 @@
+@import '~Styles/_imports.scss';
+
+.CustomAppsTable__header-file,
+.CustomAppsTable__row-file {
+  width: 200px;
+}
+
+.CustomAppsTable__row-file {
+  padding-left: 10px;
+
+  &--missing {
+    &:before{
+     display: none;
+    }
+  }
+  &--editing {
+    color: $backgroundGrey;
+    height: 90px;
+    padding: 10px 0 10px 10px;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.CustomAppsTable__header-actions,
+.CustomAppsTable__row-actions {
+  width: 80px;
+  text-align: center;
+}

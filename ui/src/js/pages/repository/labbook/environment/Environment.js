@@ -18,6 +18,7 @@ import Loader from 'Components/loader/Loader';
 import Base from './Base';
 import Packages from './packages/Packages';
 import Secrets from './secrets/Secrets';
+import CustomApps from './customApps/customApps';
 import CustomDockerfile from './CustomDockerfile';
 // assets
 import './Environment.scss';
@@ -49,7 +50,8 @@ type Props = {
       id: string,
       base: {
          id: string,
-      }
+      },
+      bundledApps: Array,
     }
   },
   containerStatus: string,
@@ -205,6 +207,13 @@ class Environment extends Component<Props> {
                   name={name}
                   isLocked={isLocked}
                 />
+                <CustomApps
+                  customApps={labbook.environment.bundledApps}
+                  environmentId={labbook.environment.id}
+                  owner={owner}
+                  name={name}
+                  isLocked={isLocked}
+                />
               </div>
             )
           }
@@ -237,6 +246,15 @@ export default createFragmentContainer(
         }
         dockerSnippet
         baseLatestRevision
+        bundledApps {
+          id
+          owner
+          name
+          appName
+          description
+          port
+          command
+        }
 
         ...Base_environment
         ...Packages_environment

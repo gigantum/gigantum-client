@@ -1,6 +1,7 @@
 {
   "recentActivity": "This section displays the three most recent important activity records. \n Select 'Activity Details' to view more in the Activity Feed.",
   "containerStatus": "This displays the container status of a Project.\n You can click on the button above to start and stop the Project container.\n While running you can launch a development environment to view and edit files. Currently only JupyterLab is supported.",
+  "customApps": "...",
   "readMe": "A README is a free-text markdown document that can be used to store useful information about a Project. Click the edit icon to put the README into edit mode.",
   "descriptionOverview": "This is where you can put a brief description about your Project.\n For a more in-depth description, use the Readme section below.",
   "environmentOverview": "This is a brief overview of a Project's environment configuration. \n Select 'Environment Details' to the right to view and modify the environment.",

@@ -1,0 +1,44 @@
+@import '~Styles/_imports.scss';
+
+.AddCustomApp {
+  padding: 20px 50px 30px 50px;
+  border: 1px solid $grey-border;
+  &__field {
+    margin: 0 10px;
+  }
+}
+
+.AddCustomApp__form {
+   margin-bottom: 20px;
+}
+.AddCustomApp__input[type="text"] {
+  margin: 0px;
+}
+
+.AddCustomApps__btn {
+  width: 100px;
+}
+
+.AddCustomApps__h6 {
+  &--width-190 {
+    width: 190px;
+  }
+
+  &--width-120 {
+    width: 120px;
+  }
+}
+
+.AddCustomApps__paragraph {
+  &--error {
+    margin: 5px;
+    flex: 1;
+  }
+}
+
+.AddCustomApp__label {
+  line-height: 31px;
+}
+.AddCustomApp__label-container{
+  margin-right: 100px;
+}

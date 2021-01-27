@@ -1,0 +1,63 @@
+@import '~Styles/_imports.scss';
+
+.CustomAppsActions__popup {
+  width: 140px;
+  position: absolute;
+  top: 34px;
+  right: -52px;
+  text-align: center;
+  z-index: index($elements, popup);
+
+  .Tooltip__pointer {
+    top: -6px;
+    right: 54px;
+  }
+}
+
+.CustomApps__btn {
+  &--round {
+    height: 30px;
+    width: 34px !important;
+    padding: 0;
+
+    border: 0 !important;
+
+    border-radius: 15px;
+  }
+
+  &--add {
+    background: url(~Images/icons/check-selected.svg) no-repeat center center;
+    background-size: 30px;
+    flex: 0 1 30px;
+
+    &:hover {
+      background: url(~Images/icons/check-selected.svg) no-repeat center center;
+      background-size: 34px;
+    }
+
+    &:focus {
+      background: url(~Images/icons/check-selected.svg) no-repeat center center;
+      background-size: 30px;
+    }
+    &:disabled {
+      background: url(~Images/icons/check-selected-disabled.svg) no-repeat center center !important;
+      background-size: 30px !important;
+    }
+  }
+
+  &--cancel {
+    background: url(~Images/icons/close.svg) no-repeat center center;
+    background-size: 26px;
+    flex: 0 1 30px;
+
+    &:hover {
+      background: url(~Images/icons/close.svg) no-repeat center center;
+      background-size: 30px;
+    }
+
+    &:focus {
+      background: url(~Images/icons/close.svg) no-repeat center center;
+      background-size: 26px;
+    }
+  }
+}
