@@ -381,7 +381,6 @@ export default (state = {
         ? action.payload.messageBody
         : [],
       error: action.payload.error,
-      messageListOpen: action.payload.error || false,
       messageBodyOpen: action.payload.error || messageBodyOpen,
       buildProgress,
       dismissed: !action.payload.error && dismissed,
@@ -414,11 +413,11 @@ export default (state = {
     } else {
       viewHistory = false;
     }
-
     return {
       ...state,
       id: action.payload.id,
       message: action.payload.message,
+      messageListOpen: messageListOpen || action.payload.error,
       status: action.payload.status,
       isLast: action.payload.isLast,
       messageStack,
@@ -426,7 +425,6 @@ export default (state = {
       open: true,
       success: true,
       error: action.payload.error,
-      messageListOpen,
       viewHistory,
     };
   } if (action.type === types.RESET_FOOTER_STORE) {

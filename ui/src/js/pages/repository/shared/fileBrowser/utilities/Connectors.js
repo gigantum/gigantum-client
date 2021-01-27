@@ -140,7 +140,6 @@ const targetSource = {
     // TODO: clean up this code, some of this logic is being duplicated. make better use of functions
     const dndItem = monitor.getItem();
     const { section } = props.section ? props : props.mutationData;
-    console.log(props);
     if ((section === 'data') && !props.uploadAllowed) {
       setWarningMessage(props.owner, props.name, 'You do not have adequate permissions to modify this dataset');
       return;

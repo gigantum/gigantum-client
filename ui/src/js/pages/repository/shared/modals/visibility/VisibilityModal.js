@@ -163,7 +163,6 @@ class VisibilityModal extends Component<Props> {
         const jobMetaDataParsed = JSON.parse(jobMetadata);
         const { failureMessage } = response.data.jobStatus;
         setPublishErrorState(response.data.jobStatus.failureMessage, jobMetaDataParsed);
-        console.log(response);
         if (setPublishingState) {
           setPublishingState(owner, name, false);
         }

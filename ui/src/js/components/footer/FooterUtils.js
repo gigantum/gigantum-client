@@ -179,6 +179,7 @@ const FooterUtils = {
                 isLast: true,
                 status: response.data.jobStatus.status,
                 error: true,
+                messageListOpen: true,
                 messageBody: [{ message: html }],
                 buildProgress: type === 'buildImage',
               };
