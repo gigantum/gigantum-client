@@ -25,7 +25,6 @@ from gtmcore.labbook.lock import reset_all_locks
 
 logger = LMLogger.get_logger()
 
-logger.info("GOT HERE11")
 
 def configure_chp(proxy_dict: dict, is_hub_client: bool) -> str:
     """Set up the configurable HTTP proxy (CHP)
@@ -98,7 +97,6 @@ def configure_default_server(config_instance: Configuration) -> None:
 # Start Flask Server Initialization and app configuration
 app = Flask("lmsrvlabbook")
 
-logger.info("GOT HERE222")
 random_bytes = os.urandom(32)
 app.config["SECRET_KEY"] = base64.b64encode(random_bytes).decode('utf-8')
 app.config["LABMGR_CONFIG"] = config = Configuration(wait_for_cache=10)
@@ -250,13 +248,10 @@ def main(debug=False) -> None:
             app.run(host="0.0.0.0", port=10001, debug=debug)
         else:
             # If debug arg is not explicitly given then it is loaded from config
-            logger.info("GOT HERE")
             app.run(host="0.0.0.0", port=10001)
     except Exception as err:
         logger.exception(err)
         raise
-
-    logger.info("Done?")
 
 
 if __name__ == '__main__':

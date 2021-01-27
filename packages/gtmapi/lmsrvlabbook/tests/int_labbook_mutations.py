@@ -1,22 +1,3 @@
-# Copyright (c) 2017 FlashX, LLC
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
 import multiprocessing
 import os
 import pprint
@@ -88,18 +69,15 @@ class TestLabbookMutation(object):
         assert proc.is_alive()
         proc.terminate()
 
-    def test_insert_file(self, fixture_working_dir_env_repo_scoped):
-        # TODO - Pending on integration tests working.
-        pass
-
     def test_export_and_import_lb(self, fixture_working_dir_env_repo_scoped):
         workdir, _, _ = fixture_working_dir_env_repo_scoped[1].rsplit('/', 2)
         os.environ['HOST_WORK_DIR'] = workdir
+
         api_server_proc = multiprocessing.Process(target=service.main, kwargs={'debug': False})
         api_server_proc.daemon = True
         api_server_proc.start()
         time.sleep(5)
-        #assert api_server_proc.is_alive()
+        assert api_server_proc.is_alive()
 
         lb_name = "mutation-export-import-unittest"
         im = InventoryManager()
@@ -107,7 +85,7 @@ class TestLabbookMutation(object):
         cm = ComponentManager(lb)
         cm.add_base(ENV_UNIT_TEST_REPO, 'ut-busybox', 0)
 
-        #assert api_server_proc.is_alive()
+        assert api_server_proc.is_alive()
         export_query = """
         mutation export {
           exportLabbook(input: {
@@ -128,12 +106,11 @@ class TestLabbookMutation(object):
 
         # Delete existing labbook in file system.
         shutil.rmtree(lb.root_dir)
-        #assert api_server_proc.is_alive()
+        assert api_server_proc.is_alive()
 
         assert job_status.status == 'finished'
         assert not os.path.exists(lb.root_dir)
         assert os.path.exists(job_status.result)
-        pprint.pprint(job_status.result)
 
         if os.path.exists(os.path.join('/tmp', os.path.basename(job_status.result))):
             os.remove(os.path.join('/tmp', os.path.basename(job_status.result)))
@@ -151,11 +128,7 @@ class TestLabbookMutation(object):
 
         files = {'uploadFile': open(new_path, 'rb')}
         qry = {"query": export_query}
-        #assert api_server_proc.is_alive()
+        assert api_server_proc.is_alive()
         r = requests.post('http://localhost:10001/labbook/', data=qry, files=files)
-
         time.sleep(0.5)
-        pprint.pprint(r)
         assert 'errors' not in r
-        time.sleep(2)
-
