@@ -151,7 +151,6 @@ const FooterUtils = {
               }
             // executes when job status has failed
             } else if (response.data.jobStatus.status === 'failed') {
-              const reportedFailureMessage = response.data.jobStatus.failureMessage;
               const errorMessage = response.data.jobStatus.failureMessage;
               hideModal();
 
