@@ -143,7 +143,6 @@ def _pull(repository: Repository, branch_name: str, override: str, feedback_cb: 
                                  cwd=repository.root_dir,
                                  feedback_callback=feedback_cb)
     if output:
-        logger.info(f"IN MERGE FAIL BLOCK")
         feedback_cb(f"Detected merge conflict, resolution method = {override}")
         bm = BranchManager(repository, username='')
         conflicted_files = bm._infer_conflicted_files(output)
