@@ -1,9 +1,14 @@
 prLink: "https://github.com/gigantum/gigantum-client/pull/1634"
 changelog:
   - type: IMPROVEMENT
-    description: |
-      * Adds more detailed output for git operations.
-      * Adds error state on sync and publish button.
-      * Adds error modal to view in more detail the errors associated with the failed operation.
-      * Opens notification tray when failure occurs on a background job.
+    description: Adds more detailed output for git operations.
+    issueLink: https://github.com/gigantum/gigantum-client/issues/1630
+  - type: IMPROVEMENT
+    description: Adds error state on sync and publish buttons.
+    issueLink: https://github.com/gigantum/gigantum-client/issues/1630
+  - type: IMPROVEMENT
+    description: Adds error modal to view in more detail the errors associated with the failed operation.
+    issueLink: https://github.com/gigantum/gigantum-client/issues/1630
+  - type: IMPROVEMENT
+    description: Opens notification tray when failure occurs on a background job.
     issueLink: https://github.com/gigantum/gigantum-client/issues/1630
