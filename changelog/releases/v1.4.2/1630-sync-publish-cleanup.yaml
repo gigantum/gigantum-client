@@ -3,7 +3,7 @@ changelog:
   - type: IMPROVEMENT
     description: |
       * Adds more detailed output for git operations.
-      * Adds error state on sync and modal button.
+      * Adds error state on sync and publish button.
       * Adds error modal to view in more detail the errors associated with the failed operation.
       * Opens notification tray when failure occurs on a background job.
     issueLink: https://github.com/gigantum/gigantum-client/issues/1630
