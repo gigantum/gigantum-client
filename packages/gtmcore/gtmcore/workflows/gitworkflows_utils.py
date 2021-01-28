@@ -361,30 +361,26 @@ def call_git_subprocess(cmd_tokens: List[str], cwd: str, feedback_callback: Call
     with subprocess.Popen(cmd_tokens, cwd=cwd, shell=False,
                           stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1, universal_newlines=True) as sp:
         for line in sp.stdout:  # type: ignore
-            # Clean up some of the output that we know we want to ignore for now
-            if ".git/info/lfs.locksverify true" in line:
-                continue
-            if "Locking support detected on remote" in line:
-                continue
-            if "hint: " in line:
-                continue
-
-            # Just grab the last item if console is updated interactively. You only get
-            # all of the output at once due to how things get flushed it seems anyway.
+            # Send each line to the feedback callback when it is available and also append
+            # to the complete output (needed when a conflict occurs)
             feedback_callback(line)
             output = f"{output}{line}"
 
     if sp.returncode != 0:
         if MERGE_CONFLICT_STRING in line:
             # This is a merge conflict that we need to handle differently.
-            # Currently, the above string is used to detect when a merge conflict
-            # has occurred.
+            # Currently, the above string MERGE_CONFLICT_STRING is used to detect when
+            # a merge conflict has occurred.
+            #
+            # When you do get a merge conflict, send the whole output back to the caller
+            # so the output can be processed to find the conflicted files.
             return output
         else:
             # An error occurred
             cmd = " ".join(cmd_tokens)
             raise Exception(f"An error occurred while running `{cmd}`")
     else:
+        # No error. Don't return output.
         return None
 
 
@@ -401,16 +397,19 @@ def handle_git_feedback(current_feedback: str, message: str) -> str:
     # We manage whitespace for git feedback in this function
     message = message.strip()
 
+    # Clean up some of the output that we know we want to ignore for now
+    # that isn't super useful to sent back to the user.
     lines_to_skip = (".git/info/lfs.locksverify true",
                      "Locking support detected on remote",
-                     "hint: ")
+                     "hint:")
     if message.startswith(lines_to_skip):
         return current_feedback
 
     if not current_feedback:
-        # First line provided as feedback.
+        # This is the first line provided as feedback so return the message.
         return message
 
+    # Check if the new message is actually an update to the previous message (e.g. a progress indicator)
     lines = current_feedback.split('\n')
     last_line = lines[-1]
     msg_parts = message.split(':')
@@ -419,10 +418,8 @@ def handle_git_feedback(current_feedback: str, message: str) -> str:
         last_line_parts = last_line.split(':')
         if len(msg_parts) == len(last_line_parts):
             if msg_parts[0] == last_line_parts[0]:
-                # It's an update, remove last line to update instead of just append
+                # It's an update! Remove last line to update instead of just append
                 _ = lines.pop()
 
     lines.append(message)
     return "\n".join(lines)
-
-
