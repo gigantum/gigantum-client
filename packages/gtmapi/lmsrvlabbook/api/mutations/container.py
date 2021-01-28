@@ -13,7 +13,7 @@ from gtmcore.container import container_for_context
 from gtmcore.mitmproxy.mitmproxy import MITMProxyOperations
 from gtmcore.container.jupyter import check_jupyter_reachable, start_jupyter
 from gtmcore.container.rserver import start_rserver, check_rstudio_reachable
-from gtmcore.container.bundledapp import start_bundled_app
+from gtmcore.container.bundledapp import start_bundled_app, check_bundled_app_reachable
 from gtmcore.logging import LMLogger
 from gtmcore.activity.services import start_labbook_monitor
 from gtmcore.environment.bundledapp import BundledAppManager
@@ -198,10 +198,14 @@ class StartDevTool(graphene.relay.ClientIDMutation):
             external_rt_prefix = f"{route_prefix}/{unique_id()}"
             logger.info(f"Adding {bundled_app['name']} to route table for {str(labbook)}.")
             suffix, _ = router.add(endpoint, external_rt_prefix)
+            suffix = f"/{suffix}"
 
             # Start app
             logger.info(f"Starting {bundled_app['name']} in {str(labbook)}.")
-            start_bundled_app(labbook, username, bundled_app['command'], tag=container_override_id)
+            start_bundled_app(labbook, username, bundled_app['command'], external_rt_prefix, tag=container_override_id)
+
+            # Wait for the app to start
+            check_bundled_app_reachable(bundled_app['name'], labbook_ip, tool_port, external_rt_prefix, 200)
 
         return suffix
 
