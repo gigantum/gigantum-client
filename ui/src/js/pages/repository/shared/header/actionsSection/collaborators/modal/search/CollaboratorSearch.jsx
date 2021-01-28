@@ -121,7 +121,6 @@ class CollaboratorSearch extends Component<Props> {
         {},
         { force: true },
       ).then((response, error) => {
-        console.log(response, response instanceof TypeError);
         if (response instanceof TypeError) {
           this.setState({ lookupError: true });
           return;

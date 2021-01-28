@@ -67,7 +67,6 @@ class RemoteLabbooks extends Component<Props> {
     UserIdentity.getUserIdentity().then((response) => {
       if (navigator.onLine) {
         if (response.data) {
-          console.log(response.data.userIdentity);
           if (!response.data.userIdentity.isSessionValid) {
             forceLocalView();
           }
