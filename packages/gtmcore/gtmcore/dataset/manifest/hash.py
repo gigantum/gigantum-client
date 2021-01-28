@@ -126,6 +126,7 @@ class SmartHash(object):
         if os.path.exists(abs_path):
             file_info = os.stat(abs_path)
             fast_hash_val = f"{relative_path}||{file_info.st_size}||{file_info.st_mtime}"
+            print(f"IN _compute_fast_hash: {fast_hash_val}")
         return fast_hash_val
 
     def fast_hash(self, path_list: list, save: bool = True) -> List[Optional[str]]:
