@@ -10,30 +10,6 @@ orbs:
 
 
 jobs:
-  debug-folder-size:
-    executor: gig_client
-    working_directory: ~/repo
-    steps:
-      - checkout
-      - setup_remote_docker
-      - run:
-          name: Set authentication credentials
-          command: bash /home/circleci/repo/.circleci/write_auth.sh
-      - run:
-          name: Run API unit, integration and coverage tests
-          command: |
-            export PYTHONPATH=$PYTHONPATH:/home/circleci/repo/packages/gtmcore
-            export SKIP_ENV_TESTS=1
-            export SKIP_BG_TESTS=1
-            cd /home/circleci/repo
-            redis-server > /dev/null 2> /dev/null &
-            rqscheduler --interval=2 2> /dev/null &
-            python3 /home/circleci/repo/packages/gtmcore/gtmcore/dispatcher/worker.py &
-            pytest packages/gtmapi/lmsrvlabbook/tests/test_dataset_files_queries.py
-            df -Th | grep "^/dev"
-      - codecov/upload:
-          flags: api
-
   mypy-gtmcore:
     executor: gig_client
     working_directory: ~/repo
@@ -236,10 +212,41 @@ workflows:
   version: 2
   run_tests:
     jobs:
-      - debug-folder-size
-      - debug-folder-size
-      - debug-folder-size
-      - debug-folder-size
-      - debug-folder-size
-      - debug-folder-size
-      - debug-folder-size
+      - changelog-schema-check
+      - changelog-pr-check:
+          # Don't run the changelog PR check when merging FROM master or integration
+          filters:
+            branches:
+              ignore:
+                - master
+                - integration
+      - mypy-gtmcore
+      - mypy-gtmapi
+      - test-gtmcore-environment:
+          requires:
+            - mypy-gtmcore
+            - mypy-gtmapi
+      - test-confhttpproxy:
+          requires:
+            - mypy-gtmcore
+            - mypy-gtmapi
+      - test-gtmcore:
+          requires:
+            - mypy-gtmcore
+            - mypy-gtmapi
+      - test-gtmapi:
+          requires:
+            - mypy-gtmcore
+            - mypy-gtmapi
+      - test-ui-components:
+          requires:
+            - mypy-gtmcore
+            - mypy-gtmapi
+      - test-background-jobs:
+          requires:
+            - mypy-gtmcore
+            - mypy-gtmapi
+      - fossa:
+          requires:
+            - mypy-gtmcore
+            - mypy-gtmapi
