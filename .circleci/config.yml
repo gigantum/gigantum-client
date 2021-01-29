@@ -89,7 +89,6 @@ jobs:
             python3 /home/circleci/repo/packages/gtmcore/gtmcore/dispatcher/worker.py &
             pytest --cov=lmsrvlabbook --cov=lmsrvcore packages/gtmapi/lmsrvlabbook
             pytest --cov=lmsrvlabbook --cov=lmsrvcore --cov-append packages/gtmapi/lmsrvcore
-            pytest --cov=lmsrvlabbook --cov=lmsrvcore --cov-append packages/gtmapi/lmsrvlabbook/tests/int_labbook_mutations.py
       - codecov/upload:
           flags: api
 
