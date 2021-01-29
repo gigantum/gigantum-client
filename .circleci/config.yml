@@ -236,3 +236,9 @@ workflows:
   run_tests:
     jobs:
       - debug-folder-size
+      - debug-folder-size
+      - debug-folder-size
+      - debug-folder-size
+      - debug-folder-size
+      - debug-folder-size
+      - debug-folder-size
