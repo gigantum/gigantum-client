@@ -13,9 +13,9 @@ class TestLabbookFileOperations(object):
         x, y, lb = mock_labbook
 
         lb_size = FO.content_size(lb)
-        # Make sure the new LB is about 10-30kB. This is about reasonable for a new, emtpy LB.
+        # Make sure the new LB is about 10-35kB. This is about reasonable for a new, emtpy LB.
         assert lb_size > 10000
-        assert lb_size < 30000
+        assert lb_size < 35000
 
     def test_insert_file_success_1(self, mock_labbook, sample_src_file):
         lb = mock_labbook[2]
