@@ -390,7 +390,7 @@ def fixture_single_dataset():
 
     # Remove the temp_dir
     config_instance.clear_cached_configuration()
-    shutil.rmtree(temp_dir)
+    #shutil.rmtree(temp_dir)
 
 
 @pytest.fixture(scope='class')

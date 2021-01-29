@@ -124,6 +124,7 @@ class SmartHash(object):
         print(f"IN _compute_fast_hash - relative_path: {relative_path}")
         abs_path = self.get_abs_path(relative_path)
         print(f"IN _compute_fast_hash - abs_path: {abs_path}")
+        print(f"IN _compute_fast_hash - is dir: {os.path.isdir(abs_path)}")
         fast_hash_val = None
         if os.path.exists(abs_path):
             file_info = os.stat(abs_path)
