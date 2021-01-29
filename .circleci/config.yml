@@ -3,7 +3,7 @@ version: 2.1
 executors:
   gig_client:
     docker:
-      - image: gigantum/circleci-client:22729ee812-2020-07-14
+      - image: gigantum/circleci-client:0ab01940cd-2021-01-29
 
 orbs:
     codecov: codecov/codecov@1.1.0
