@@ -30,6 +30,7 @@ jobs:
             rqscheduler --interval=2 2> /dev/null &
             python3 /home/circleci/repo/packages/gtmcore/gtmcore/dispatcher/worker.py &
             pytest packages/gtmapi/lmsrvlabbook/tests/test_dataset_files_queries.py
+            df -Th | grep "^/dev"
       - codecov/upload:
           flags: api
 
