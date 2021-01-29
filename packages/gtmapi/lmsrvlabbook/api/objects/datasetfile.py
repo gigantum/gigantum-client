@@ -49,7 +49,6 @@ class DatasetFile(graphene.ObjectType):
         # Set class properties
         self.is_dir = self._file_info['is_dir']
         self.modified_at = self._file_info['modified_at']
-        print(f"IN LOAD FILE INFO: {self.key} - {self._file_info['size']}")
         self.size = f"{self._file_info['size']}"
         self.is_local = self._file_info['is_local']
 

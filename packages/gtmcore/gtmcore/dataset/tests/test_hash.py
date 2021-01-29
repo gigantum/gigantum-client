@@ -248,7 +248,7 @@ class TestHashing(object):
                 assert len(result.split("||")) == 3
                 path, fsize, _ = result.split("||")
                 assert path == fname
-                assert fsize == '4096'
+                assert fsize == '0'
             else:
                 assert len(result.split("||")) == 3
                 path, fsize, _ = result.split("||")

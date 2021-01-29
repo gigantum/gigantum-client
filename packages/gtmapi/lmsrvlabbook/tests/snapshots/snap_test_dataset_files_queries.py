@@ -18,7 +18,7 @@ snapshots['TestDatasetFilesQueries.test_get_dataset_files 1'] = {
                             'isDir': True,
                             'isLocal': True,
                             'key': 'other_dir/',
-                            'size': '4096'
+                            'size': '0'
                         }
                     },
                     {
@@ -91,7 +91,7 @@ snapshots['TestDatasetFilesQueries.test_get_dataset_files 2'] = {
                             'isDir': True,
                             'isLocal': True,
                             'key': 'other_dir/',
-                            'size': '4096'
+                            'size': '0'
                         }
                     },
                     {
@@ -211,7 +211,7 @@ snapshots['TestDatasetFilesQueries.test_get_dataset_files_missing 1'] = {
                             'isDir': True,
                             'isLocal': True,
                             'key': 'other_dir/',
-                            'size': '4096'
+                            'size': '0'
                         }
                     },
                     {
@@ -284,7 +284,7 @@ snapshots['TestDatasetFilesQueries.test_get_dataset_files_missing 2'] = {
                             'isDir': True,
                             'isLocal': True,
                             'key': 'other_dir/',
-                            'size': '4096'
+                            'size': '0'
                         }
                     },
                     {

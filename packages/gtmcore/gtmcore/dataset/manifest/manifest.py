@@ -356,7 +356,6 @@ class Manifest(object):
                     raise ValueError(f"Failed to update manifest for {f}. File not found.")
 
                 _, file_bytes, mtime = fh.split("||")
-                print(f"IN UPDATE: {f} - {file_bytes}")
                 self._manifest_io.add_or_update(f, h, mtime, file_bytes)
 
         if status.deleted:
@@ -379,7 +378,6 @@ class Manifest(object):
             dict
         """
         abs_path = os.path.join(self.cache_mgr.cache_root, self.dataset_revision, key)
-        print(f"IN _file_info: {key} - {item.get('b')}")
         return {'key': key,
                 'size': item.get('b'),
                 'is_local': os.path.exists(abs_path),

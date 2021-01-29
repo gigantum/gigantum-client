@@ -246,7 +246,7 @@ class TestManifest(object):
         assert file_info[3]['is_dir'] is False
         assert 'modified_at' in file_info[3]
         assert file_info[0]['key'] == "other_dir/"
-        assert file_info[0]['size'] == '4096'
+        assert file_info[0]['size'] == '0'
         assert file_info[0]['is_local'] is True
         assert file_info[0]['is_dir'] is True
         assert 'modified_at' in file_info[0]
